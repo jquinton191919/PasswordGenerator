@@ -298,12 +298,14 @@ private static String getSymbol(String s){
 	}
 	
 	public static void main(String [] args) {
-		String number, animal;
+		String number="", animal="";
 		Console console = System.console();
 		char numberChar [] = console.readPassword("Enter number: ");
-		number = new String(numberChar);
 		char animalChar [] = console.readPassword("Enter animal (k=kitten, p=pony, s=spider, d=dragon, b=bear, no/invalid input=puppy): ");
-		animal = new String(animalChar);
+		for(int i=0; i < (numberChar.length <= 4 ? numberChar.length : 4); i++) {
+			number += numberChar[i];
+		}
+		animal += (animalChar.length > 0) ? animalChar[0] : "foo";
 		switch(animal.toLowerCase()){
 		case "k": animal = "kitten";
 		break;
@@ -317,7 +319,7 @@ private static String getSymbol(String s){
 		break;
 		default: animal = "puppy";
 		break;
-		}
+		}//
 		StringSelection selection = new StringSelection(generate(number, animal, false));
 	    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 	    clipboard.setContents(selection, selection);

@@ -1,9 +1,22 @@
 package generate;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.io.Console;
+import java.util.Scanner;
+
 public class Pwd {
 
 	private static boolean isKitten = false, isPony = false, isSpider = false, isDragon = false, isPuppy = false, isBear = false, isFlagged = false;
 
+	/****
+	 * Generates a password based on the input parameters
+	 * @param input - numerical input
+	 * @param animal - desired animal algorithm
+	 * @param adjective - input adjective for the animal
+	 * @param flag - flag indicates whether to use the alternative ascii set
+	 * **********/
 public static String generate(String input, String animal, String adjective, boolean flag) {
 	switch( animal.toUpperCase() ) {
 	case "KITTEN":
@@ -20,6 +33,12 @@ public static String generate(String input, String animal, String adjective, boo
 	}
 }
 
+/****
+ * Generates a password based on the input parameters
+ * @param input - numerical input
+ * @param animal - desired animal algorithm
+ * @param flag - flag indicates whether to use the alternative ascii set
+ * **********/
 public static String generate(String input, String animal, boolean flag) {
 	isFlagged = flag;
 	switch( animal.toUpperCase() ) {
@@ -155,7 +174,10 @@ public static String generate(String input, String animal, boolean flag) {
 	} // end generate method
 
 
-
+/**
+ * Generates the word part of the password
+ * @return the input number as a spelled out word
+ * **/
 private static String getWord(String s) {
 	switch(s) {
 		case "0": return "zero";
@@ -173,6 +195,10 @@ private static String getWord(String s) {
 	} // end getWord method
 
 
+/**
+ * Generates the special character part of the password
+ * @return the input number's corresponding special character according to USA keyboards
+ * **/
 private static String getSymbol(String s){
 	//alternative special character list
 	if(isFlagged) {
@@ -213,6 +239,9 @@ private static String getSymbol(String s){
 	} // end getSymbol method
 
 
+	/*****
+	 * Shifts, or rotates, the input string's letters by 13 letters
+	 * *******/
 	public static String rot13(String input) {
 		
 		String output = "";
@@ -236,12 +265,19 @@ private static String getSymbol(String s){
 		return output;
 	}
 	
+	/***
+	 * Shifts ascii characters by 13
+	 * *****/
 	public static String asciiRot13(String input) {
 		String output = rot13( input.toUpperCase() ), number ="";
 		number += Integer.toString( output.getBytes()[0] ).charAt(0);
 		return number+getWord(number);
 	}
 	
+	/*****
+	 * Camel cases the input string
+	 * @return String as StRiNg
+	 * *****/
 	public static String toAltCase(String input) {
 		String min ="", maj ="", output = "";
 		for(int i=0; i<input.length(); i++) {
@@ -262,7 +298,32 @@ private static String getSymbol(String s){
 	}
 	
 	public static void main(String [] args) {
-		System.out.println( generate("333", "dragon","godless", true) );
+		String number, animal;
+		Console console = System.console();
+		char numberChar [] = console.readPassword("Enter number: ");
+		number = new String(numberChar);
+		char animalChar [] = console.readPassword("Enter animal (k=kitten, p=pony, s=spider, d=dragon, b=bear, no/invalid input=puppy): ");
+		animal = new String(animalChar);
+		switch(animal.toLowerCase()){
+		case "k": animal = "kitten";
+		break;
+		case "p": animal = "pony";
+		break;
+		case "s": animal = "spider";
+		break;
+		case "d": animal = "dragon";
+		break;
+		case "b": animal = "bear";
+		break;
+		default: animal = "puppy";
+		break;
+		}
+		StringSelection selection = new StringSelection(generate(number, animal, false));
+	    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+	    clipboard.setContents(selection, selection);
+	    System.out.println("Password copied to clipboard");
+	    
+		
 	}
 
 

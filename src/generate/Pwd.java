@@ -297,6 +297,11 @@ private static String getSymbol(String s){
 		return output;
 	}
 	
+	/******
+	 * Entry point for command line password generation
+	 * @param args - not intended for usage, actual command line argument uses System.console. But if System.console is null, then this arg will be
+	 * used to generate a password
+	 * ********/
 	public static void main(String [] args) {
 		if(System.console() == null){
 			PwdGUI.main(args);
@@ -329,7 +334,11 @@ private static String getSymbol(String s){
 		}
 		
 	}
-	
+	/*****
+	 * Ensures that the input is actually a number
+	 * @param numberChar - array of chars that represents the user's input
+	 * @param console - console object used to grab user input
+	 * ********/
 	public static String validateNumber(char [] numberChar, Console console) {
 		String number = "";
 		for(int i=0; i < (numberChar.length <= 4 ? numberChar.length : 4); i++) {
@@ -343,6 +352,10 @@ private static String getSymbol(String s){
 		
 	}
 	
+	/******
+	 * Checks to see if the input is a number
+	 * @param number - test string
+	 * *****/
 	public static boolean isNumber(String number) {
 		try{
 			Integer.parseInt(number);

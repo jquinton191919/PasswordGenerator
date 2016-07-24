@@ -298,33 +298,51 @@ private static String getSymbol(String s){
 	}
 	
 	public static void main(String [] args) {
-		String number="", animal="";
-		Console console = System.console();
-		char numberChar [] = console.readPassword("Enter number: ");
-		char animalChar [] = console.readPassword("Enter animal (k=kitten, p=pony, s=spider, d=dragon, b=bear, no/invalid input=puppy): ");
+		if(System.console() == null){
+			PwdGUI.main(args);
+		}
+		else{
+			String number="", animal="";
+			Console console = System.console();
+			number = validateNumber(console.readPassword("Enter number: "), console);
+			char animalChar [] = console.readPassword("Enter animal (k=kitten, p=pony, s=spider, d=dragon, b=bear, no/invalid input=puppy): ");
+			animal += (animalChar.length > 0) ? animalChar[0] : "foo";
+			
+			switch(animal.toLowerCase()){
+			case "k": animal = "kitten";
+			break;
+			case "p": animal = "pony";
+			break;
+			case "s": animal = "spider";
+			break;
+			case "d": animal = "dragon";
+			break;
+			case "b": animal = "bear";
+			break;
+			default: animal = "puppy";
+			break;
+			}//
+			StringSelection selection = new StringSelection(generate(number, animal, false));
+		    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		    clipboard.setContents(selection, selection);
+		    System.out.println("Password copied to clipboard");
+		}
+		
+	}
+	
+	public static String validateNumber(char [] numberChar, Console console) {
+		String number = "";
 		for(int i=0; i < (numberChar.length <= 4 ? numberChar.length : 4); i++) {
 			number += numberChar[i];
 		}
-		animal += (animalChar.length > 0) ? animalChar[0] : "foo";
-		switch(animal.toLowerCase()){
-		case "k": animal = "kitten";
-		break;
-		case "p": animal = "pony";
-		break;
-		case "s": animal = "spider";
-		break;
-		case "d": animal = "dragon";
-		break;
-		case "b": animal = "bear";
-		break;
-		default: animal = "puppy";
-		break;
-		}//
-		StringSelection selection = new StringSelection(generate(number, animal, false));
-	    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-	    clipboard.setContents(selection, selection);
-	    System.out.println("Password copied to clipboard");
-	    
+		try{
+			Integer.parseInt(number);
+			return number;
+		}
+		catch(NumberFormatException nfe) {
+			System.err.println(number + " is not a number.");
+			return validateNumber(console.readPassword("Enter number: "), console);
+		}
 		
 	}
 

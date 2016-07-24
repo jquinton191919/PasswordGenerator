@@ -335,15 +335,22 @@ private static String getSymbol(String s){
 		for(int i=0; i < (numberChar.length <= 4 ? numberChar.length : 4); i++) {
 			number += numberChar[i];
 		}
+		while( !isNumber(number) ){
+			System.err.println(number + " is not a number.");
+			number = validateNumber(console.readPassword("Enter number: "), console);
+		}
+		return number;
+		
+	}
+	
+	public static boolean isNumber(String number) {
 		try{
 			Integer.parseInt(number);
-			return number;
+			return true;
 		}
 		catch(NumberFormatException nfe) {
-			System.err.println(number + " is not a number.");
-			return validateNumber(console.readPassword("Enter number: "), console);
+			return false;
 		}
-		
 	}
 
 

@@ -110,7 +110,7 @@ public class PwdGUI extends JFrame {
 			}
 		});
 		
-		adjective.setToolTipText("<html>Enter an adjective for the animal"
+		adjective.setToolTipText("<html>Enter an adjective for the animal. "
 				+ "Some systems require special characters "
 				+ "</html>");
 		

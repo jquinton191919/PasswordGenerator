@@ -8,7 +8,14 @@ import java.util.Scanner;
 
 public class Pwd {
 
-	private static boolean isKitten = false, isPony = false, isSpider = false, isDragon = false, isPuppy = false, isBear = false, isFlagged = false;
+	private static boolean isKitten = false, 
+			isPony = false, 
+			isSpider = false, 
+			isDragon = false, 
+			isPuppy = false, 
+			isBear = false,
+			isBunny = false,
+			isFlagged = false;
 
 	/****
 	 * Generates a password based on the input parameters
@@ -28,6 +35,8 @@ public static String generate(String input, String animal, String adjective, boo
 	case "PUPPY":
 	case "BEAR":
 		return toAltCase( rot13( adjective) ) + generate(input, animal, flag);
+	case "BUNNY":
+		return toMixedCase(input, adjective);
 	default:
 			return "";
 	}
@@ -49,6 +58,7 @@ public static String generate(String input, String animal, boolean flag) {
 		isDragon = false;
 		isPuppy = false;
 		isBear = false;
+		isBunny = false;
 		break;
 	case "PONY":
 		isKitten = false;
@@ -57,6 +67,7 @@ public static String generate(String input, String animal, boolean flag) {
 		isDragon = false;
 		isPuppy = false;
 		isBear = false;
+		isBunny = false;
 		break;
 	case "SPIDER":
 		isKitten = false;
@@ -65,6 +76,7 @@ public static String generate(String input, String animal, boolean flag) {
 		isDragon = false;
 		isPuppy = false;
 		isBear = false;
+		isBunny = false;
 		break;
 	case "DRAGON":
 		isKitten = false;
@@ -73,6 +85,7 @@ public static String generate(String input, String animal, boolean flag) {
 		isDragon = true;
 		isPuppy = false;
 		isBear = false;
+		isBunny = false;
 		break;
 	case "PUPPY":
 		isKitten = false;
@@ -81,6 +94,7 @@ public static String generate(String input, String animal, boolean flag) {
 		isDragon = false;
 		isPuppy = true;
 		isBear = false;
+		isBunny = false;
 		break;
 	case "BEAR":
 		isKitten = false;
@@ -89,6 +103,16 @@ public static String generate(String input, String animal, boolean flag) {
 		isDragon = false;
 		isPuppy = false;
 		isBear = true;
+		isBunny = false;
+		break;
+	case "BUNNY":
+		isKitten = false;
+		isPony = false;
+		isSpider = false;
+		isDragon = false;
+		isPuppy = false;
+		isBear = false;
+		isBunny = true;
 		break;
 	default:
 		isKitten = false;
@@ -97,11 +121,12 @@ public static String generate(String input, String animal, boolean flag) {
 		isDragon = false;
 		isPuppy = false;
 		isBear = false;
+		isBunny = false;
 		break;
 	}
 	
 	String symbolPart="", wordPart="", wordPartUpperCase="";
-	
+	if (isBunny) return toMixedCase(input);
 	if(input.length() == 1) {
 		if(isKitten) return getSymbol(input)+input+getWord(input);
 		else if(isPony) return getSymbol(input)+getWord(input)+input;
@@ -297,20 +322,73 @@ private static String getSymbol(String s){
 		return output;
 	}
 	
+	public static String toMixedCase(String input) {
+		String output = "",
+				symbol = "",
+				word = "",
+				character = "";
+		for(int i=0; i < input.length(); i++) {
+			character += input.charAt(i);
+			symbol = getSymbol(character);
+			word = getWord(character);
+			
+			if(input.length() == 1) {
+				for(int z=0; z < word.length(); z++)
+					output += (z % 2 == 0) ? character + word.charAt(z)
+										  : symbol + word.toUpperCase().charAt(z);
+			}
+			else {
+				for(int z=0; z < word.length(); z++)
+					output += (i % 2 == 0) ? character + word.charAt(z)
+					                       : symbol + word.toUpperCase().charAt(z);
+			}
+			character = "";
+		}
+		return output;
+	}
+	
+	public static String toMixedCase(String numbers, String adjective) {
+		String output = "",
+				symbol = "",
+				word = "",
+				character = "";
+		adjective = rot13(adjective);
+		for(int i=0; i < numbers.length(); i++) {
+			character += numbers.charAt(i);
+			symbol = getSymbol(character);
+			
+			if(numbers.length() == 1) {
+				word = getWord(character);
+				for(int z=0; z < adjective.length(); z++)
+					output += (z % 2 == 0) ? character + adjective.charAt(z) + word
+										  : symbol + adjective.toUpperCase().charAt(z) + word.toUpperCase();
+			}
+			else {
+				for(int z=0; z < adjective.length(); z++)
+					output += (i % 2 == 0) ? character + adjective.charAt(z)
+					                       : symbol + adjective.toUpperCase().charAt(z);
+			}
+			character = "";
+		}
+		return output;
+	}
+	
 	/******
 	 * Entry point for command line password generation
 	 * @param args - not intended for usage, actual command line argument uses System.console. But if System.console is null, then this arg will be
 	 * used to generate a password
 	 * ********/
 	public static void main(String [] args) {
+		
 		if(System.console() == null){
 			PwdGUI.main(args);
 		}
+		
 		else{
 			String number="", animal="";
 			Console console = System.console();
 			number = validateNumber(console.readPassword("Enter number: "), console);
-			char animalChar [] = console.readPassword("Enter animal (k=kitten, p=pony, s=spider, d=dragon, b=bear, no/invalid input=puppy): ");
+			char animalChar [] = console.readPassword("Enter animal (k=kitten, p=pony, s=spider, d=dragon, b=bear, u=puppy no/default=bunny): ");
 			animal += (animalChar.length > 0) ? animalChar[0] : "foo";
 			
 			switch(animal.toLowerCase()){
@@ -324,7 +402,9 @@ private static String getSymbol(String s){
 			break;
 			case "b": animal = "bear";
 			break;
-			default: animal = "puppy";
+			case "u": animal = "puppy";
+			break;
+			default: animal = "bunny";
 			break;
 			}//
 			StringSelection selection = new StringSelection(generate(number, animal, false));

@@ -68,7 +68,8 @@ public class PwdGUI extends JFrame {
             new MyImageIcon( new ImageIcon( getClass().getResource( "pony.png" ) ), "pony" ),
             new MyImageIcon( new ImageIcon( getClass().getResource( "spider.png" ) ), "spider" ),
             new MyImageIcon( new ImageIcon( getClass().getResource( "bear.png" ) ), "bear" ),
-            new MyImageIcon( new ImageIcon( getClass().getResource( "dragon.png" ) ), "dragon" ) 
+            new MyImageIcon( new ImageIcon( getClass().getResource( "dragon.png" ) ), "dragon" ),
+            new MyImageIcon( new ImageIcon( getClass().getResource( "bunny.png" ) ), "bunny" )
         };
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })

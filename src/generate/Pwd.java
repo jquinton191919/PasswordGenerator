@@ -126,14 +126,14 @@ public static String generate(String input, String animal, boolean flag) {
 	}
 	
 	String symbolPart="", wordPart="", wordPartUpperCase="";
-	if (isBunny) return toMixedCase(input);
+	if (isBunny) return toMixedCase(input,"");
 	if(input.length() == 1) {
 		if(isKitten) return getSymbol(input)+input+getWord(input);
 		else if(isPony) return getSymbol(input)+getWord(input)+input;
 		else if (isSpider) return getWord(input).toUpperCase()+input+getSymbol(input);
 		else if(isDragon) return getWord(input).toUpperCase()+getSymbol(input)+input;
-		else if (isPuppy) return getSymbol(input)+input+toAltCase( rot13( getWord(input) ) );
-		else if (isBear) return toAltCase( rot13( getWord(input) ) )+getSymbol(input)+input;
+		else if (isPuppy) return input+getWord(input)+getSymbol(input);
+		else if (isBear) return getSymbol(input)+getWord(input).toUpperCase()+input;
 		else return null;
 	}
 	
@@ -149,11 +149,11 @@ public static String generate(String input, String animal, boolean flag) {
 		//build word part
 		for(int i=0; i<input.length(); i++) {
 			temp += input.charAt(i);
-			if( (isKitten) || (isPony) ){
+			if( (isKitten) || (isPony) || (isPuppy)){
 				if(i < input.length() / 2) wordPartUpperCase += getWord( temp ).toUpperCase();
 				else wordPart += getWord( temp );
 			}
-			else if( (isSpider) || (isDragon) ){
+			else if( (isSpider) || (isDragon) || (isBear) ){
 				if(i < input.length() / 2) wordPart += getWord( temp );
 				else wordPartUpperCase += getWord( temp ).toUpperCase();
 			}
@@ -168,8 +168,8 @@ public static String generate(String input, String animal, boolean flag) {
 		else if(isPony) return symbolPart+input+wordPartUpperCase+wordPart;
 		else if(isSpider) return input+wordPart+wordPartUpperCase+symbolPart;
 		else if(isDragon) return input+symbolPart+wordPart+wordPartUpperCase;
-		else if(isPuppy) return symbolPart+toAltCase( rot13(wordPart) )+input;
-		else if(isBear) return input+symbolPart+toAltCase( rot13(wordPart) );
+		else if(isPuppy) return wordPartUpperCase+symbolPart+input+wordPart;
+		else if(isBear) return wordPart+input+symbolPart+wordPartUpperCase;
 		else return null;
 		
 		} // end if input length is even
@@ -322,56 +322,55 @@ private static String getSymbol(String s){
 		return output;
 	}
 	
-	public static String toMixedCase(String input) {
+	public static String toInnerCase(String input) {
+		String output = "";
+		return output;
+	}
+	
+	public static String toMixedCase(String input, String adjective) {
 		String output = "",
 				symbol = "",
 				word = "",
 				character = "";
+		boolean isAdjective = (adjective.length() > 0);
+		if(isAdjective) adjective = rot13(adjective);
 		for(int i=0; i < input.length(); i++) {
 			character += input.charAt(i);
 			symbol = getSymbol(character);
 			word = getWord(character);
 			
-			if(input.length() == 1) {
-				for(int z=0; z < word.length(); z++)
-					output += (z % 2 == 0) ? character + word.charAt(z)
-										  : symbol + word.toUpperCase().charAt(z);
+			if(isAdjective) {
+				
+				if(input.length() == 1) {
+					word = getWord(character);
+					for(int z=0; z < adjective.length(); z++)
+						output += (z % 2 == 0) ? character + adjective.charAt(z) + word
+											  : symbol + adjective.toUpperCase().charAt(z) + word.toUpperCase();
+				}
+				else {
+					for(int z=0; z < adjective.length(); z++)
+						output += (i % 2 == 0) ? character + adjective.charAt(z)
+						                       : symbol + adjective.toUpperCase().charAt(z);
+				}
 			}
+			
 			else {
-				for(int z=0; z < word.length(); z++)
-					output += (i % 2 == 0) ? character + word.charAt(z)
-					                       : symbol + word.toUpperCase().charAt(z);
+				if(input.length() == 1) {
+					for(int z=0; z < word.length(); z++)
+						output += (z % 2 == 0) ? character + word.charAt(z)
+											  : symbol + word.toUpperCase().charAt(z);
+				}
+				else {
+					for(int z=0; z < word.length(); z++)
+						output += (i % 2 == 0) ? character + word.charAt(z)
+						                       : symbol + word.toUpperCase().charAt(z);
+				}
 			}
 			character = "";
 		}
 		return output;
 	}
 	
-	public static String toMixedCase(String numbers, String adjective) {
-		String output = "",
-				symbol = "",
-				word = "",
-				character = "";
-		adjective = rot13(adjective);
-		for(int i=0; i < numbers.length(); i++) {
-			character += numbers.charAt(i);
-			symbol = getSymbol(character);
-			
-			if(numbers.length() == 1) {
-				word = getWord(character);
-				for(int z=0; z < adjective.length(); z++)
-					output += (z % 2 == 0) ? character + adjective.charAt(z) + word
-										  : symbol + adjective.toUpperCase().charAt(z) + word.toUpperCase();
-			}
-			else {
-				for(int z=0; z < adjective.length(); z++)
-					output += (i % 2 == 0) ? character + adjective.charAt(z)
-					                       : symbol + adjective.toUpperCase().charAt(z);
-			}
-			character = "";
-		}
-		return output;
-	}
 	
 	/******
 	 * Entry point for command line password generation
@@ -379,7 +378,6 @@ private static String getSymbol(String s){
 	 * used to generate a password
 	 * ********/
 	public static void main(String [] args) {
-		
 		if(System.console() == null){
 			PwdGUI.main(args);
 		}
@@ -412,7 +410,6 @@ private static String getSymbol(String s){
 		    clipboard.setContents(selection, selection);
 		    System.out.println("Password copied to clipboard");
 		}
-		
 	}
 	/*****
 	 * Ensures that the input is actually a number
@@ -422,9 +419,11 @@ private static String getSymbol(String s){
 	public static String validateNumber(char [] numberChar, Console console) {
 		String number = "";
 		for(int i=0; i < (numberChar.length <= 4 ? numberChar.length : 4); i++) {
-			number += numberChar[i];
+			if(numberChar[i] != (char) 32)
+				number += numberChar[i];
 		}
 		while( !isNumber(number) ){
+			number = (number == "" ? number = "blank" : number); 
 			System.err.println(number + " is not a number.");
 			number = validateNumber(console.readPassword("Enter number: "), console);
 		}
